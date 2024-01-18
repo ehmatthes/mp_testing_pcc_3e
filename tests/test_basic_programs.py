@@ -1,7 +1,7 @@
 import subprocess, sys
 from pathlib import Path
 from shlex import split
-import sys
+
 
 def test_basic_program():
     """Test a program that only prints output."""
