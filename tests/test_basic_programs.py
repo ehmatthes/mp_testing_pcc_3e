@@ -1,4 +1,4 @@
-import subprocess, sys
+import subprocess, sys, os
 from pathlib import Path
 from shlex import split
 
@@ -72,6 +72,23 @@ basic_programs = [
     ("chapter_09/car.py", "2019 Subaru Outback\nThis car has 23500 miles on it.\nThis car has 23600 miles on it."),
     ("chapter_09/dog.py", "My dog's name is Willie.\nMy dog is 6 years old.\nWillie is now sitting.\n\nYour dog's name is Lucy.\nYour dog is 3 years old.\nLucy is now sitting."),
     ("chapter_09/electric_car.py", "2024 Nissan Leaf\nThis car has a 40-kWh battery.\nThis car can go about 150 miles on a full charge."),
+    ("chapter_09/importing_classes/importing_0_importing_single_class/my_car.py", "2024 Audi A4\nThis car has 23 miles on it."),
+    ("chapter_09/importing_classes/importing_0_importing_single_class/my_car.py", "2024 Audi A4\nThis car has 23 miles on it."),
+    ("chapter_09/importing_classes/importing_1_storing_multiple_classes_in_a_module/my_electric_car.py", "2024 Nissan Leaf\nThis car has a 40-kWh battery.\nThis car can go about 150 miles on a full charge."),
+    ("chapter_09/importing_classes/importing_2_importing_multiple_classes_from_a_module/my_cars.py", "2024 Ford Mustang\n2024 Nissan Leaf"),
+    ("chapter_09/importing_classes/importing_3_importing_entire_module/my_cars.py", "2024 Ford Mustang\n2024 Nissan Leaf"),
+    ("chapter_09/importing_classes/importing_4_importing_module_into_module/my_cars.py", "2024 Ford Mustang\n2024 Nissan Leaf"),
+]
+
+# Programs that must be run from their parent directory.
+chdir_programs = [
+    ("chapter_10/reading_from_a_file/file_reader.py", "3.1415926535\n  8979323846\n  2643383279"),
+    ("chapter_10/reading_from_a_file/pi_string.py", "3.14159265358979323846264338327950288419716939937510...\n1000002"),
+    ("chapter_10/exceptions/alice.py", "The file alice.txt has about 29594 words."),
+    ("chapter_10/exceptions/word_count.py", "The file alice.txt has about 29594 words.\nThe file moby_dick.txt has about 215864 words.\nThe file little_women.txt has about 189142 words."),
+    ("chapter_10/storing_data/number_reader.py", "[2, 3, 5, 7, 11, 13]"),
+    ("chapter_10/storing_data/greet_user.py", "Welcome back, Eric!"),
+    ("chapter_10/storing_data/remember_me.py", "Welcome back, Eric!"),
 ]
 
 @pytest.mark.parametrize(
@@ -80,6 +97,21 @@ def test_basic_program(python_cmd, file_path, expected_output):
     """Test a program that only prints output."""
     root_dir = Path(__file__).parents[1]
     path = root_dir / file_path
+
+    # Run the command, and make assertions.
+    cmd = f"{python_cmd} {path.as_posix()}"
+    output = utils.run_command(cmd)
+
+    assert output == expected_output
+
+@pytest.mark.parametrize("file_path, expected_output", chdir_programs)
+def test_chdir_program(python_cmd, file_path, expected_output):
+    """Test a program that must be run from the parent directory."""
+    root_dir = Path(__file__).parents[1]
+    path = root_dir / file_path
+
+    # Change to the parent directory before running command.
+    os.chdir(path.parent)
 
     # Run the command, and make assertions.
     cmd = f"{python_cmd} {path.as_posix()}"
