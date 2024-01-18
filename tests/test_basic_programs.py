@@ -6,7 +6,12 @@ import pytest
 
 
 basic_programs = [
+    # Chapter 1
     ("chapter_01/hello_world.py", "Hello Python world!"),
+
+    # Chapter 2
+    ("chapter_02/apostrophe.py", "One of Python's strengths is its diverse community."),
+    ("chapter_02/comment.py", "Hello Python people!"),
 ]
 
 @pytest.mark.parametrize(
