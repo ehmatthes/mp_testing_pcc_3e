@@ -82,7 +82,7 @@ def test_basic_program(python_cmd, file_path, expected_output):
     path = root_dir / file_path
 
     # Run the command, and make assertions.
-    cmd = f"{python_cmd} {path}"
+    cmd = f"{python_cmd} {path.as_posix()}"
     output = utils.run_command(cmd)
 
     assert output == expected_output
