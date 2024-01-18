@@ -4,6 +4,8 @@ from shlex import split
 
 import pytest
 
+import utils
+
 
 basic_programs = [
     # Chapter 1
@@ -81,9 +83,6 @@ def test_basic_program(python_cmd, file_path, expected_output):
 
     # Run the command, and make assertions.
     cmd = f"{python_cmd} {path}"
-    cmd_parts = split(cmd)
-    result = subprocess.run(cmd_parts,
-        capture_output=True, text=True, check=True)
-    output = result.stdout.strip()
+    output = utils.run_command(cmd)
 
     assert output == expected_output
