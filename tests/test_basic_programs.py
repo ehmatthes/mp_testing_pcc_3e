@@ -5,14 +5,12 @@ from shlex import split
 import pytest
 
 
-import pytest
-
 basic_programs = [
-    ('chapter_01/hello_world.py', 'Hello Python world!'),
+    ("chapter_01/hello_world.py", "Hello Python world!"),
 ]
 
 @pytest.mark.parametrize(
-    'file_path, expected_output', basic_programs)
+    "file_path, expected_output", basic_programs)
 def test_basic_program(file_path, expected_output):
     """Test a program that only prints output."""
     root_dir = Path(__file__).parents[1]
