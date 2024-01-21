@@ -6,10 +6,25 @@ import pytest
 import utils
 
 
+# --- CLI args ---
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--pygame-version", action="store",
+        default=None,
+        help="Pygame version to test"
+    )
+
+
+# --- Fixtures ---
+
 @pytest.fixture(scope="session")
 def python_cmd():
     """Return path to the venv Python interpreter."""
     return utils.get_python_cmd()
+
+
+# --- Cleanup ---
 
 def pytest_sessionfinish(session, exitstatus):
     """Custom cleanup work."""
@@ -19,4 +34,4 @@ def pytest_sessionfinish(session, exitstatus):
     cmd = f"{python_cmd} --version"
     output = utils.run_command(cmd)
 
-    print(f"***** Tests were run with: {output}")
+    print(f"\n***** Tests were run with: {output}")
