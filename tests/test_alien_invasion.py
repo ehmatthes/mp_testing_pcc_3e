@@ -15,16 +15,6 @@ def check_pygame_version(request, python_cmd):
     """Check if the correct version of Pygame is installed."""
     utils.check_library_version(request, python_cmd, "pygame")
 
-    # pygame_version = request.config.getoption("--pygame-version")
-
-    # if pygame_version:
-    #     print(f"\n*** Installing pygame {pygame_version}\n")
-
-    #     cmd = f"{python_cmd} -m pip install pygame=={pygame_version}"
-    #     output = utils.run_command(cmd)
-    # else:
-    #     print("\nUsing existing pygame version.")
-
 
 def test_ai_game():
     """Test basic functionality of the game."""
