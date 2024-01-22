@@ -32,9 +32,11 @@ def check_library_version(request, python_cmd, lib_name):
 
     # Regardless of what version was requested,
     # show which version is being used.
-    cmd = f"{python_cmd} -m pip freeze | grep {lib_name}"
-    result = subprocess.run(cmd, capture_output=True,
-            text=True, check=True, shell=True)
-    output = result.stdout.strip()
+    cmd = f"{python_cmd} -m pip freeze"
+    output = run_command(cmd)
+    lib_output = [
+        line for line in output.splitlines()
+        if lib_name in line
+    ]
 
-    print(f"\n*** Running tests with {output}\n")
+    print(f"\n*** Running tests with {lib_output}\n")
