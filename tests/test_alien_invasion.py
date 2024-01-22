@@ -24,7 +24,7 @@ def test_ai_game():
     """Test basic functionality of the game."""
 
     # Add source path to sys.path, so we can import AlienInvasion.
-    ai_path = Path(__file__).parents[1] / 'chapter_14' / 'scoring'
+    ai_path = Path(__file__).parents[1] / "chapter_14" / "scoring"
     sys.path.insert(0, str(ai_path))
     from alien_invasion import AlienInvasion
     from ai_tester import AITester
