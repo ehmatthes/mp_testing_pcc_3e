@@ -10,6 +10,10 @@ import pytest
 import utils
 
 
+# Run this test last, because the Pygame window persists until the entire
+#  test suite finishes.
+pytestmark = pytest.mark.run(order=-1)
+
 @pytest.fixture(scope="module", autouse=True)
 def check_pygame_version(request, python_cmd):
     """Check if the correct version of Pygame is installed."""
