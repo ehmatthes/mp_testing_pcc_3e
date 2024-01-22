@@ -51,6 +51,8 @@ def pytest_sessionfinish(session, exitstatus):
     else:
         print("  No packages were modified.")
 
+    print("\n--- Finished resetting test venv ---\n")
+
     # Show which version of Python was used for tests.
     cmd = f"{python_cmd} --version"
     output = utils.run_command(cmd)
