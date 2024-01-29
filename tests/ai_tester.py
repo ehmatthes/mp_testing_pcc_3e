@@ -11,7 +11,7 @@ class AITester:
 
     def run_game(self):
         """Replaces the original run_game(),
-          so we can control the game.
+        so we can control the game.
         """
         # Start out in an active state.
         self.ai_game.game_active = True
