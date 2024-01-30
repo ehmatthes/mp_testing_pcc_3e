@@ -110,3 +110,55 @@ def test_random_walk_program(tmp_path, python_cmd):
 
     # Verify text output.
     assert output == ""
+
+weather_programs = [
+    ("sitka_highs.py", "sitka_weather_2021_simple.csv", ""),
+]
+
+@pytest.mark.parametrize("test_file, data_file, txt_output",
+    weather_programs)
+def test_weather_program(tmp_path, python_cmd, 
+        test_file, data_file, txt_output):
+
+    # Make a weather_data/ dir in tmp dir.
+    dest_data_dir = tmp_path / "weather_data"
+    dest_data_dir.mkdir()
+
+    # Copy files to tmp dir.
+    path_py = (Path(__file__).parents[1] /
+        "chapter_16"/ "the_csv_file_format" / test_file)
+    path_data = path_py.parent / "weather_data" / data_file
+
+    dest_path_py = tmp_path / path_py.name
+    dest_path_data = (dest_path_py.parent /
+            "weather_data" / path_data.name)
+
+    shutil.copy(path_py, dest_path_py)
+    shutil.copy(path_data, dest_path_data)
+
+    # Write images instead of calling plt.show().
+    contents = dest_path_py.read_text()
+    save_cmd = 'plt.savefig("output_file.png")'
+    contents = contents.replace("plt.show()", save_cmd)
+    dest_path_py.write_text(contents)
+
+    # Run program.
+    os.chdir(tmp_path)
+    cmd = f"{python_cmd} {dest_path_py.name}"
+    output = utils.run_command(cmd)
+
+    # Verify file was created, and that it matches reference file.
+    output_path = tmp_path / "output_file.png"
+    assert output_path.exists()
+
+    # Print output file path, so it's easy to find images.
+    print(f"\n***** {dest_path_py.name} output:", output_path)
+
+    # Check output image against reference file.
+    reference_filename = dest_path_py.name.replace(".py", ".png")
+    reference_file_path = (Path(__file__).parent
+            / "reference_files" / reference_filename)
+    assert filecmp.cmp(output_path, reference_file_path)
+
+    # Verify text output.
+    assert output == txt_output
