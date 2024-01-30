@@ -61,3 +61,52 @@ def test_simple_plots(tmp_path, python_cmd, test_file):
 
     # Verify text output.
     assert output == ""
+
+def test_random_walk_program(tmp_path, python_cmd):
+    # Copy rw_visual.py and random_walk.py.
+    path_rwv = (Path(__file__).parents[1] /
+        "chapter_15" / "random_walks" / "rw_visual.py")
+    path_rw = path_rwv.parent / "random_walk.py"
+
+    dest_path_rwv = tmp_path / path_rwv.name
+    dest_path_rw = tmp_path / path_rw.name
+
+    shutil.copy(path_rwv, dest_path_rwv)
+    shutil.copy(path_rw, dest_path_rw)
+
+    # Modify rw_visual.py for testing.
+    lines = dest_path_rwv.read_text().splitlines()[:26]
+
+    # Remove while line.
+    del lines[4:6]
+    # Unindent remaining lines.
+    lines = [line.lstrip() for line in lines]
+    # Add command to write image file.
+    save_cmd = '\nplt.savefig("output_file.png")'
+    lines.append(save_cmd)
+    # Add lines to seed random number generator.
+    lines.insert(0, "import random")
+    lines.insert(4, "\nrandom.seed(23)")
+
+    # Write modified rw_visual.py.
+    contents = "\n".join(lines)
+    dest_path_rwv.write_text(contents)
+
+    # Run the file.
+    os.chdir(tmp_path)
+    cmd = f"{python_cmd} {dest_path_rwv.name}"
+    output = utils.run_command(cmd)
+
+    # Verify file was created, and that it matches reference file.
+    output_path = tmp_path / "output_file.png"
+    assert output_path.exists()
+
+    # Print output file path, so it"s easy to find images.
+    print("\n***** rw_visual output:", output_path)
+
+    reference_file_path = (Path(__file__).parent /
+        "reference_files" / "rw_visual.png")
+    assert filecmp.cmp(output_path, reference_file_path)
+
+    # Verify text output.
+    assert output == ""
