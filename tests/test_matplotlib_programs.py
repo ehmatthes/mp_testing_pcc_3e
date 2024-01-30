@@ -11,7 +11,9 @@ Overall approach:
 """
 
 from pathlib import Path
-import shutil
+import shutil, os
+
+import utils
 
 
 def test_mpl_squares(tmp_path, python_cmd):
@@ -28,5 +30,14 @@ def test_mpl_squares(tmp_path, python_cmd):
     contents = contents.replace("plt.show()", save_cmd)
     dest_path.write_text(contents)
 
-    print(f"\n***** Modified file: {dest_path}")
+    # Run program from tmp path dir.
+    os.chdir(tmp_path)
+    cmd = f"{python_cmd} {dest_path.name}"
+    output = utils.run_command(cmd)
 
+    # Verify file was created, and that it matches reference file.
+    output_path = tmp_path / "output_file.png"
+    assert output_path.exists()
+
+    # Print output file path, so it's easy to find images.
+    print("\n***** mpl_squares output:", output_path)
