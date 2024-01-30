@@ -13,12 +13,19 @@ Overall approach:
 from pathlib import Path
 import shutil, os, filecmp
 
+import pytest
+
 import utils
 
 
-def test_mpl_squares(tmp_path, python_cmd):
+simple_plots = [
+    "chapter_15/plotting_simple_line_graph/mpl_squares.py",
+    "chapter_15/plotting_simple_line_graph/scatter_squares.py",
+]
+
+@pytest.mark.parametrize("test_file", simple_plots)
+def test_simple_plots(tmp_path, python_cmd, test_file):
     # Copy program file to temp dir.
-    test_file = "chapter_15/plotting_simple_line_graph/mpl_squares.py"
     src_path = Path(__file__).parents[1] / test_file
 
     dest_path = tmp_path / src_path.name
@@ -32,7 +39,7 @@ def test_mpl_squares(tmp_path, python_cmd):
     # Uncomment this to verify that comparison
     #   fails for incorrect image:
     # contents = contents.replace("16", "32")
-    
+
     dest_path.write_text(contents)
 
     # Run program from tmp path dir.
