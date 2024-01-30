@@ -28,6 +28,11 @@ def test_mpl_squares(tmp_path, python_cmd):
     contents = dest_path.read_text()
     save_cmd = 'plt.savefig("output_file.png")'
     contents = contents.replace("plt.show()", save_cmd)
+
+    # Uncomment this to verify that comparison
+    #   fails for incorrect image:
+    # contents = contents.replace("16", "32")
+    
     dest_path.write_text(contents)
 
     # Run program from tmp path dir.
