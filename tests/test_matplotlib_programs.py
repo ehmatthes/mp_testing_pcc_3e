@@ -18,10 +18,10 @@ import pytest
 import utils
 
 
-@pytest.fixture(scope='module', autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def check_matplotlib_version(request, python_cmd):
     """Check if the correct version of Matplotlib is installed."""
-    utils.check_library_version(request, python_cmd, 'matplotlib')
+    utils.check_library_version(request, python_cmd, "matplotlib")
 
 
 simple_plots = [
