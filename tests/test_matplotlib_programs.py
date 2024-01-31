@@ -43,7 +43,7 @@ def test_simple_plots(tmp_path, python_cmd, test_file):
     contents = contents.replace("plt.show()", save_cmd)
 
     # Uncomment this to verify that comparison
-    #   fails for incorrect image:
+    #   fails for an incorrect plot image:
     # contents = contents.replace("16", "32")
 
     dest_path.write_text(contents)
