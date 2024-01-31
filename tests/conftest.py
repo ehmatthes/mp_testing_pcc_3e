@@ -14,6 +14,11 @@ def pytest_addoption(parser):
         default=None,
         help="Pygame version to test"
     )
+    parser.addoption(
+        "--matplotlib-version", action="store",
+        default=None,
+        help="Matplotlib version to test"
+    )
 
 
 # --- Fixtures ---
