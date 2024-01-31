@@ -113,6 +113,8 @@ def test_random_walk_program(tmp_path, python_cmd):
 
 weather_programs = [
     ("sitka_highs.py", "sitka_weather_2021_simple.csv", ""),
+    ("sitka_highs_lows.py", "sitka_weather_2021_simple.csv", ""),
+    ("death_valley_highs_lows.py", "death_valley_2021_simple.csv", "Missing data for 2021-05-04 00:00:00")
 ]
 
 @pytest.mark.parametrize("test_file, data_file, txt_output",
