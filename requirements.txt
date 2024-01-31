@@ -1,5 +1,6 @@
 contourpy==1.2.0
 cycler==0.12.1
+execnet==2.0.2
 fonttools==4.47.2
 iniconfig==2.0.0
 kiwisolver==1.4.5
@@ -12,5 +13,6 @@ pygame==2.5.2
 pyparsing==3.1.1
 pytest==7.4.4
 pytest-ordering==0.6
+pytest-xdist==3.5.0
 python-dateutil==2.8.2
 six==1.16.0
