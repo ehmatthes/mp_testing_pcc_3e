@@ -90,3 +90,30 @@ def test_die_program(tmp_path, python_cmd, test_file):
     reference_file_path = (Path(__file__).parent /
         "reference_files" / output_filename)
     assert filecmp.cmp(output_path, reference_file_path)
+
+
+def test_eq_explore_data(tmp_path, python_cmd):
+
+    # Copy .py and data files to tmp dir.
+    path_py = (Path(__file__).parents[1] / "chapter_16"
+        / "mapping_global_datasets" / "eq_explore_data.py")
+    path_data = (path_py.parent / "eq_data"
+        / "eq_data_1_day_m1.geojson")
+
+    dest_data_dir = tmp_path / "eq_data"
+    dest_data_dir.mkdir()
+
+    dest_path_py = tmp_path / path_py.name
+    dest_path_data = dest_data_dir / path_data.name
+
+    shutil.copy(path_py, dest_path_py)
+    shutil.copy(path_data, dest_path_data)
+
+    # Run file.
+    os.chdir(tmp_path)
+    cmd = f"{python_cmd} {path_py.name}"
+    output = utils.run_command(cmd)
+
+    assert output == "[1.6, 1.6, 2.2, 3.7, 2.92000008, 1.4, 4.6, 4.5, 1.9, 1.8]\n[-150.7585, -153.4716, -148.7531, -159.6267, -155.248336791992]\n[61.7591, 59.3152, 63.1633, 54.5612, 18.7551670074463]"
+
+    
