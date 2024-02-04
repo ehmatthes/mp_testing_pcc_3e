@@ -35,6 +35,8 @@ import utils
 
 die_programs = [
     "chapter_15/rolling_dice/die_visual.py",
+    "chapter_15/rolling_dice/dice_visual.py",
+    "chapter_15/rolling_dice/dice_visual_d6d10.py",
 ]
 
 @pytest.mark.parametrize("test_file", die_programs)
