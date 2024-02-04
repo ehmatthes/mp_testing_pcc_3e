@@ -1,4 +1,4 @@
-import subprocess, sys
+import subprocess, sys, re
 from shlex import split
 from pathlib import Path
 
@@ -40,3 +40,11 @@ def check_library_version(request, python_cmd, lib_name):
     ]
 
     print(f"\n*** Running tests with {lib_output}\n")
+
+def replace_plotly_hash(path):
+    """Replace Plotly's unique hash ID with "dummy-id"."""
+    contents = path.read_text()
+    hash_id = re.search(r'div id="([a-f0-9\-]{36})"',
+            contents).group(1)
+    contents = contents.replace(hash_id, "dummy-id")
+    path.write_text(contents)

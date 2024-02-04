@@ -77,12 +77,7 @@ def test_die_program(tmp_path, python_cmd, test_file):
     output_path = tmp_path / output_filename
     assert output_path.exists() 
 
-    # Replace hash ID with a static dummy ID.
-    contents = output_path.read_text()
-    hash_id = re.search(r'div id="([a-f0-9\-]{36})"',
-            contents).group(1)
-    contents = contents.replace(hash_id, "dummy-id")
-    output_path.write_text(contents)
+    utils.replace_plotly_hash(output_path)
 
     # Print output file path, so it's easy to find.
     print("\n***** Plotly output:", output_path)
@@ -116,4 +111,4 @@ def test_eq_explore_data(tmp_path, python_cmd):
 
     assert output == "[1.6, 1.6, 2.2, 3.7, 2.92000008, 1.4, 4.6, 4.5, 1.9, 1.8]\n[-150.7585, -153.4716, -148.7531, -159.6267, -155.248336791992]\n[61.7591, 59.3152, 63.1633, 54.5612, 18.7551670074463]"
 
-    
+
