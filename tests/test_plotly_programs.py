@@ -26,7 +26,7 @@ Notes:
 """
 
 from pathlib import Path
-import os, shutil, filecmp
+import os, shutil, filecmp, re
 
 import pytest
 
@@ -74,6 +74,13 @@ def test_die_program(tmp_path, python_cmd, test_file):
     # Verify the output file exists.
     output_path = tmp_path / output_filename
     assert output_path.exists() 
+
+    # Replace hash ID with a static dummy ID.
+    contents = output_path.read_text()
+    hash_id = re.search(r'div id="([a-f0-9\-]{36})"',
+            contents).group(1)
+    contents = contents.replace(hash_id, "dummy-id")
+    output_path.write_text(contents)
 
     # Print output file path, so it's easy to find.
     print("\n***** Plotly output:", output_path)
