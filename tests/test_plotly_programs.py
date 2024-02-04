@@ -112,3 +112,51 @@ def test_eq_explore_data(tmp_path, python_cmd):
     assert output == "[1.6, 1.6, 2.2, 3.7, 2.92000008, 1.4, 4.6, 4.5, 1.9, 1.8]\n[-150.7585, -153.4716, -148.7531, -159.6267, -155.248336791992]\n[61.7591, 59.3152, 63.1633, 54.5612, 18.7551670074463]"
 
 
+def test_eq_world_map(tmp_path, python_cmd):
+
+    # Copy .py and data files to tmp dir.
+    path_py = (Path(__file__).parents[1] / "chapter_16"
+        / "mapping_global_datasets" / "eq_world_map.py")
+    path_data = (path_py.parent / "eq_data"
+        / "eq_data_30_day_m1.geojson")
+
+    dest_data_dir = tmp_path / "eq_data"
+    dest_data_dir.mkdir()
+
+    dest_path_py = tmp_path / path_py.name
+    dest_path_data = dest_data_dir / path_data.name
+
+    shutil.copy(path_py, dest_path_py)
+    shutil.copy(path_data, dest_path_data)
+
+    # Modify the program file for testing.
+    lines = dest_path_py.read_text().splitlines()[:-1]
+
+    # Set random seed.
+    lines.insert(0, "import random")
+    lines.insert(6, "random.seed(23)")
+
+    # Add the call to fig.write_html().
+    output_filename = path_py.name.replace(".py", ".html")
+    save_cmd = f'fig.write_html("{output_filename}")'
+    lines.append(save_cmd)
+
+    contents = "\n".join(lines)
+    dest_path_py.write_text(contents)
+
+    # Run file.
+    os.chdir(tmp_path)
+    cmd = f"{python_cmd} {path_py.name}"
+    output = utils.run_command(cmd)
+
+    # Verify the output file exists.
+    output_path = tmp_path / output_filename
+    assert output_path.exists()
+    utils.replace_plotly_hash(output_path)
+
+    # Print output file path, so it's easy to find.
+    print("\n***** Plotly output:", output_path)
+
+    reference_file_path = (Path(__file__).parent /
+        "reference_files" / output_filename)
+    assert filecmp.cmp(output_path, reference_file_path)
