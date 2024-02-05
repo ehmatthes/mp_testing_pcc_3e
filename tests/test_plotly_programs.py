@@ -160,3 +160,21 @@ def test_eq_world_map(tmp_path, python_cmd):
     reference_file_path = (Path(__file__).parent /
         "reference_files" / output_filename)
     assert filecmp.cmp(output_path, reference_file_path)
+
+def test_python_repos_py(python_cmd):
+    """Test python_repos.py, which only makes a GitHub API call.
+    No need to work in a tmp dir.
+
+    Note: This test may fail when run in parallel, ie `pytest -n auto`.
+      If it fails in parallel, try running without `-n auto`.
+    """
+    path = (Path(__file__).parents[1] / "chapter_17"
+        / "python_repos.py")
+    cmd = f"{python_cmd} {path}"
+    output = utils.run_command(cmd)
+
+    assert "Status code: 200" in output
+    assert "Complete results: True\nRepositories returned: 30\n\nSelected information about each repository:" in output
+    assert "Name: public-apis\nOwner: public-apis" in output
+    assert "Name: awesome-python\nOwner: vinta" in output
+    assert "Name: django\nOwner: django" in output
