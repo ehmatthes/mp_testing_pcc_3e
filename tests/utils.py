@@ -7,7 +7,8 @@ def run_command(cmd):
     """Run a command, and return the output."""
     cmd_parts = split(cmd)
     result = subprocess.run(cmd_parts,
-        capture_output=True, text=True, check=True)
+        capture_output=True, text=True, check=True,
+        encoding="utf-8")
     
     return result.stdout.strip()
 

@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from pathlib import Path
 
 import pytest
@@ -27,6 +27,15 @@ def pytest_addoption(parser):
 
 
 # --- Fixtures ---
+
+@pytest.fixture(scope="session", autouse=True)
+def python_encoding():
+    """Set encoding to deal with Unicode on Windows.
+
+    Affects GitHub and HN API calls.
+    """
+    if sys.platform == "win32":
+        os.environ["PYTHONIOENCODING"] = "utf-8"
 
 @pytest.fixture(scope="session")
 def python_cmd():
