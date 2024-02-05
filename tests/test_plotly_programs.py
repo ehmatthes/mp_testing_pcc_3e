@@ -29,6 +29,8 @@ from pathlib import Path
 import os, shutil, filecmp, re
 
 import pytest
+from PIL import Image
+import numpy as np
 
 import utils
 
@@ -178,3 +180,57 @@ def test_python_repos_py(python_cmd):
     assert "Name: public-apis\nOwner: public-apis" in output
     assert "Name: awesome-python\nOwner: vinta" in output
     assert "Name: django\nOwner: django" in output
+
+def test_python_repos_visual(tmp_path, python_cmd):
+    """Test python_repos_visual.py, which makes a GitHub API call, and then
+    plots the results.
+
+    Can't make an exact test, because data changes. Also, this is an html file,
+      not a straight plot. So, take a screenshot of the generated page, 
+      and make an assertion about that screenshot. For now, average all pixel data,
+      and assert it's within a threshold of the original value.
+    When this test fails, check to see if the plot is still correct. If it is, widen
+      the threshold a bit.
+
+    Note: This test may fail when run in parallel, ie `pytest -n auto`.
+      If it fails in parallel, try running without `-n auto`.
+    """
+    # Copy program file to tmp dir.
+    path = (Path(__file__).parents[1] / "chapter_17"
+        / "python_repos_visual.py")
+    dest_path = tmp_path / path.name
+    shutil.copy(path, dest_path)
+
+    # Modify the program file for testing.
+    lines = dest_path.read_text().splitlines()[:-1]
+
+    # Add a call to fig.write_image().
+    output_filename = path.name.replace(".py", ".png")
+    save_cmd = f'fig.write_image("{output_filename}")'
+    lines.append(save_cmd)
+
+    contents = "\n".join(lines)
+    dest_path.write_text(contents)
+
+    # Run file.
+    os.chdir(tmp_path)
+    cmd = f"{python_cmd} {path.name}"
+    output = utils.run_command(cmd)
+    output_path = tmp_path / output_filename
+
+    # Verify that output file exists.
+    assert output_path.exists()
+
+    # Get average pixel value.
+    with Image.open(output_path) as img:
+        img = img.convert("RGB")        
+        data = np.array(img)
+        mean_rgb = np.mean(data)
+        print("\n***** mean_rgb:", mean_rgb)
+
+    # As of 9/23/23, mean_rgb is 239.45.
+    # Widen threshold if this fails with a valid image file.
+    assert 238 < mean_rgb < 242
+
+    # Check output.
+    assert output == "Status code: 200\nComplete results: True"
