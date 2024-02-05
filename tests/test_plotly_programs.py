@@ -234,3 +234,44 @@ def test_python_repos_visual(tmp_path, python_cmd):
 
     # Check output.
     assert output == "Status code: 200\nComplete results: True"
+
+def test_hn_article(python_cmd):
+    """Test requesting info about a particular HN article.
+
+    Note: Some info in output could change, so only make assertions about
+      stable information.
+    """
+    path = Path(__file__).parent.parent / "chapter_17" / "hn_article.py"
+    cmd = f"{python_cmd} {path.as_posix()}"
+    output = utils.run_command(cmd)
+
+    assert 'Status code: 200\n{\n    "by": "sohkamyung",\n    "descendants":' in output
+    assert '"id": 31353677,\n    "kids": [' in output
+    assert '"title": "Astronomers reveal first image of the black hole at the heart of our galaxy",\n    "type": "story",\n    "url": "https://public.nrao.edu/news/astronomers-reveal-first-image-of-the-black-hole-at-the-heart-of-our-galaxy/"' in output
+
+
+def test_hn_submissions(tmp_path, python_cmd):
+    """Test hn_submissions.py.
+    Modify it to just make 2 calls, instead of 30.
+    """
+    # Copy program file to tmp dir.
+    path = Path(__file__).parent.parent / "chapter_17" / "hn_submissions.py"
+    dest_path = tmp_path / path.name
+    shutil.copy(path, dest_path)
+
+    # Replace `submission_ids[:30]` with `submission_ids[:2]`
+    contents = dest_path.read_text()
+    contents = contents.replace("submission_ids[:30]", "submission_ids[:2]")
+    dest_path.write_text(contents)
+
+    # Run program.
+    os.chdir(tmp_path)
+    cmd = f"{python_cmd} {dest_path.name}"
+    output = utils.run_command(cmd)
+
+    # Check output.
+    assert "Status code: 200\nid: " in output
+    assert output.count("status: 200") == 2
+    assert output.count("Title: ") == 2
+    assert output.count("Discussion link: ") == 2
+    assert output.count("Comments: ") == 2
