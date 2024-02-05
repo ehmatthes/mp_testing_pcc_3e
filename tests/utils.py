@@ -41,6 +41,27 @@ def check_library_version(request, python_cmd, lib_name):
 
     print(f"\n*** Running tests with {lib_output}\n")
 
+
+def add_plotly_write_commands(path, lines):
+    """Add commands to write HTML file, with and without plotly.js.
+    I want the usual version with plotly.js, for viewing.
+    But testing against a reference file is more reliable
+      without including plotly.js.
+    """
+    # Add call to fig.write_html()
+    output_filename = path.name.replace(".py", ".html")
+    save_cmd = f'fig.write_html("{output_filename}")'
+    lines.append(save_cmd)
+
+    # Add call to fig.write_html(), without inline plotly.js.
+    output_filename_nojs = output_filename.replace(
+        ".html", "_nojs.html")
+    save_cmd_nojs = f'\nfig.write_html("{output_filename_nojs}", include_plotlyjs=False)'
+    lines.append(save_cmd_nojs)
+
+    return lines
+
+
 def replace_plotly_hash(path):
     """Replace Plotly's unique hash ID with "dummy-id"."""
     contents = path.read_text()

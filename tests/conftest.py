@@ -19,6 +19,11 @@ def pytest_addoption(parser):
         default=None,
         help="Matplotlib version to test"
     )
+    parser.addoption(
+        "--plotly-version", action="store",
+        default=None,
+        help="Plotly version to test"
+    )
 
 
 # --- Fixtures ---
