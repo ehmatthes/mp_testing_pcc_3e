@@ -28,3 +28,17 @@ def test_django_project(tmp_path, python_cmd):
     cmd = f"{llenv_python_cmd} -m pip freeze"
     output = utils.run_command(cmd)
     assert output == ""
+
+    # Install requirements, and requests for testing.
+    cmd = f"{llenv_python_cmd} -m pip install -r requirements.txt"
+    output = utils.run_command(cmd)
+    cmd = f"{llenv_python_cmd} -m pip install requests"
+    output = utils.run_command(cmd)
+
+    # Run `pip freeze` again, verify installations.
+    cmd = f"{llenv_python_cmd} -m pip freeze"
+    output = utils.run_command(cmd)
+    assert "Django==" in output
+    assert "django-bootstrap5==" in output
+    assert "platformshconfig==" in output
+    assert "requests==" in output
