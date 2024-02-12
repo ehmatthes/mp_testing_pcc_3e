@@ -19,3 +19,12 @@ def test_django_project(tmp_path, python_cmd):
     cmd = f"{python_cmd} -m venv ll_env"
     output = utils.run_command(cmd)
     assert output == ""
+
+    # Get python command from ll_env.
+    llenv_python_cmd = (dest_dir
+            / "ll_env" / "bin" / "python")
+
+    # Run `pip freeze` to prove we're in a fresh venv.
+    cmd = f"{llenv_python_cmd} -m pip freeze"
+    output = utils.run_command(cmd)
+    assert output == ""
