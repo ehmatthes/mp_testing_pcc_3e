@@ -1,7 +1,10 @@
-import os, shutil
+import os, shutil, subprocess
+from time import sleep
 from pathlib import Path
 
 import utils
+
+import requests
 
 def test_django_project(tmp_path, python_cmd):
     """Test the Learning Log project."""
@@ -80,3 +83,15 @@ def test_django_project(tmp_path, python_cmd):
         except requests.ConnectionError:
             attempts += 1
             sleep(0.2)
+
+    # Verify connection.
+    assert connected
+
+    # Verify connection was made to *this* server, not
+    #   a previous test run, or some other server on 8008.
+    # Pause for log file to be written.
+    sleep(1)
+    log_text = runserver_log.read_text()
+    assert "Error: That port is already in use" not in "log_text"
+    assert "Watching for file changes with StatReloader" in log_text
+    assert 'GET / HTTP/1.1" 200' in log_text
