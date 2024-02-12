@@ -42,3 +42,12 @@ def test_django_project(tmp_path, python_cmd):
     assert "django-bootstrap5==" in output
     assert "platformshconfig==" in output
     assert "requests==" in output
+
+    # Make migrations, call check.
+    cmd = f"{llenv_python_cmd} manage.py migrate"
+    output = utils.run_command(cmd)
+    assert "Operations to perform:\n  Apply all migrations: admin, auth, contenttypes, learning_logs, sessions\nRunning migrations:\n  Applying contenttypes.0001_initial... OK\n  Applying auth.0001_initial... OK\n  Applying admin.0001_initial... OK\n  Applying admin.0002_logentry_remove_auto_add... OK\n  Applying admin.0003_logentry_add_action_flag_choices... OK\n  Applying contenttypes.0002_remove_content_type_name... OK\n  Applying auth.0002_alter_permission_name_max_length... OK\n  Applying auth.0003_alter_user_email_max_length... OK\n  Applying auth.0004_alter_user_username_opts... OK\n  Applying auth.0005_alter_user_last_login_null... OK\n  Applying auth.0006_require_contenttypes_0002... OK\n  Applying auth.0007_alter_validators_add_error_messages... OK\n  Applying auth.0008_alter_user_username_max_length... OK\n  Applying auth.0009_alter_user_last_name_max_length... OK\n  Applying auth.0010_alter_group_name_max_length... OK\n  Applying auth.0011_update_proxy_permissions... OK\n  Applying auth.0012_alter_user_first_name_max_length... OK\n  Applying learning_logs.0001_initial... OK\n  Applying learning_logs.0002_entry... OK\n  Applying learning_logs.0003_topic_owner... OK\n  Applying sessions.0001_initial... OK" in output
+
+    cmd = f"{llenv_python_cmd} manage.py check"
+    output = utils.run_command(cmd)
+    assert "System check identified no issues (0 silenced)." in output
