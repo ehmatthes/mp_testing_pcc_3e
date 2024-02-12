@@ -51,3 +51,32 @@ def test_django_project(tmp_path, python_cmd):
     cmd = f"{llenv_python_cmd} manage.py check"
     output = utils.run_command(cmd)
     assert "System check identified no issues (0 silenced)." in output
+
+    # Start development server.
+    #   To verify it's not running after the test:
+    #   macOS: `$ ps aux | grep runserver`
+    #
+    # Log to file, so we can verify we haven't connected to a
+    #   previous server process, or an unrelated one.
+    #   shell=True is necessary for redirecting output.
+    #   start_new_session=True is required to terminate
+    #   the process group.
+    runserver_log = dest_dir / "runserver_log.txt"
+    cmd = f"{llenv_python_cmd} manage.py runserver 8008"
+    cmd += f" > {runserver_log} 2>&1"
+    server_process = subprocess.Popen(cmd, shell=True,
+            start_new_session=True)
+
+    # Wait until server is ready.
+    url = "http://localhost:8008/"
+    connected = False
+    attempts, max_attempts = 1, 50
+    while attempts < max_attempts:
+        try:
+            r = requests.get(url)
+            if r.status_code == 200:
+                connected = True
+                break
+        except requests.ConnectionError:
+            attempts += 1
+            sleep(0.2)
