@@ -206,7 +206,7 @@ def check_server_ready(log_path):
     log_text = log_path.read_text()
     assert "Error: That port is already in use" not in log_text
     assert "Watching for file changes with StatReloader" in log_text
-    assert 'GET / HTTP/1.1" 200' in log_text
+    assert '"GET / HTTP/1.1" 200' in log_text
 
 
 def stop_server(server_process):
