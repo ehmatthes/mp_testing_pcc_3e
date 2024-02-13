@@ -1,10 +1,12 @@
-import os, shutil, subprocess
+import os, shutil, subprocess, signal
 from time import sleep
 from pathlib import Path
 
-import utils
-
 import requests
+
+import utils
+from resources.ll_e2e_tests import run_e2e_test
+
 
 def test_django_project(tmp_path, python_cmd):
     """Test the Learning Log project."""
@@ -95,3 +97,23 @@ def test_django_project(tmp_path, python_cmd):
     assert "Error: That port is already in use" not in "log_text"
     assert "Watching for file changes with StatReloader" in log_text
     assert 'GET / HTTP/1.1" 200' in log_text
+
+    try:
+        run_e2e_test("http://localhost:8008/")
+    except AssertionError as e:
+        raise e
+    finally:
+        # Terminate the development server process.
+        #   There will be several child processes, 
+        #   so the process group needs to be terminated.
+        print("\n***** Stopping server...")
+        pgid = os.getpgid(server_process.pid)
+        os.killpg(pgid, signal.SIGTERM)
+        server_process.wait()
+
+        # Print a message about the server status before exiting.
+        if server_process.poll() is None:
+            print("\n***** Server still running.")
+            print("*****   PID:", server_process.pid)
+        else:
+            print("\n***** Server process terminated.")
