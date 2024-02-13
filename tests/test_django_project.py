@@ -234,6 +234,10 @@ def stop_server_win(server_process):
     """Stop server processes on Windows.
     Get the main process, then all children and grandchildren,
       and terminate all processes.
+
+    See running processes: > tasklist
+    See info about specific process: > tasklist /fi "pid eq <pid>"
+    Kill task: > taskkill /PID <pid> /F
     """
     main_proc = psutil.Process(server_process.pid)
     child_procs = main_proc.children(recursive=True)
