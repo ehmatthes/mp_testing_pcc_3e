@@ -20,7 +20,7 @@ import psutil
 import requests
 
 import utils
-from resources.ll_e2e_tests import e2e_test
+from resources.ll_e2e_tests import run_e2e_test
 from resources.migration_output import migration_output
 
 
@@ -146,7 +146,7 @@ def run_e2e_tests(dest_dir, llenv_python_cmd):
     # If e2e test is not run in a try block, a failed assertion will
     #   prevent the server from being terminated correctly.
     try:
-        e2e_test("http://localhost:8008/")
+        run_e2e_test("http://localhost:8008/")
     except AssertionError as e:
         raise e
     finally:
@@ -206,7 +206,7 @@ def check_server_ready(log_path):
     log_text = log_path.read_text()
     assert "Error: That port is already in use" not in log_text
     assert "Watching for file changes with StatReloader" in log_text
-    assert ""GET / HTTP/1.1" 200" in log_text
+    assert 'GET / HTTP/1.1" 200' in log_text
 
 
 def stop_server(server_process):
