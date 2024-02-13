@@ -27,6 +27,11 @@ def test_django_project(request, tmp_path, python_cmd):
         print("\n***** Unpinning versions from requirements.txt")
         req_path = dest_dir / "requirements.txt"
         contents = "Django\ndjango-bootstrap5\nplatformshconfig\n"
+
+        if django_version != "unpinned":
+            django_req = f"Django=={django_version}"
+            contents = contents.replace("Django", django_req)
+
         req_path.write_text(contents)
 
     # Build a fresh venv for the project.
