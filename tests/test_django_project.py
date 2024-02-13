@@ -8,7 +8,7 @@ import utils
 from resources.ll_e2e_tests import run_e2e_test
 
 
-def test_django_project(tmp_path, python_cmd):
+def test_django_project(request, tmp_path, python_cmd):
     """Test the Learning Log project."""
 
     # Copy project to temp dir.
@@ -19,6 +19,15 @@ def test_django_project(tmp_path, python_cmd):
 
     # All remaining work needs to be done in dest_dir.
     os.chdir(dest_dir)
+
+    # Unpin requirements if appropriate.
+    django_version = request.config.getoption("--django-version")
+
+    if django_version is not None:
+        print("\n***** Unpinning versions from requirements.txt")
+        req_path = dest_dir / "requirements.txt"
+        contents = "Django\ndjango-bootstrap5\nplatformshconfig\n"
+        req_path.write_text(contents)
 
     # Build a fresh venv for the project.
     cmd = f"{python_cmd} -m venv ll_env"
@@ -117,3 +126,19 @@ def test_django_project(tmp_path, python_cmd):
             print("*****   PID:", server_process.pid)
         else:
             print("\n***** Server process terminated.")
+
+    # Show what versions of Python and Django were used.
+    cmd = f"{llenv_python_cmd} -m pip freeze"
+    output = utils.run_command(cmd)
+
+    lines = output.splitlines()
+    django_version = [l for l in lines if "Django" in l][0]
+    django_version = django_version.replace("==", " ")
+
+    cmd = f"{llenv_python_cmd} --version"
+    python_version = utils.run_command(cmd)
+
+    msg = "\n***** Tested Learning Log project using:"
+    msg += f"\n*****   {python_version}"
+    msg += f"\n*****   {django_version}"
+    print(msg)

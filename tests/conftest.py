@@ -24,6 +24,11 @@ def pytest_addoption(parser):
         default=None,
         help="Plotly version to test"
     )
+    parser.addoption(
+        "--django-version", action="store",
+        default=None,
+        help="Django version to test"
+    )
 
 
 # --- Fixtures ---
