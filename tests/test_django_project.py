@@ -223,6 +223,9 @@ def stop_server(server_process):
         server_process.wait()
 
     # Print a message about the server status before exiting.
+    # DEV: This does not seem to work consistently on Windows.
+    #   I'm seeing a PID, but when I query it there's no task
+    #   with that PID.
     if server_process.poll() is None:
         print("\n***** Server still running.")
         print("*****   PID:", server_process.pid)
